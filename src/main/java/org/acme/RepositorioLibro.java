@@ -1,8 +1,10 @@
 package org.acme;
 
-import org.acme.Libro
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 
-public interface RepositorioLibro extends JpaRepository<Libro,Long> {
+@ApplicationScoped
+public class RepositorioLibro implements PanacheRepository<idLibro> {
 
 }
