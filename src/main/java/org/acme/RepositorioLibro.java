@@ -5,6 +5,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped
-public class RepositorioLibro implements PanacheRepository<idLibro> {
+public class RepositorioLibro implements PanacheRepository<Libro> {
 
 }

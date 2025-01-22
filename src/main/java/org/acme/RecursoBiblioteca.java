@@ -1,5 +1,7 @@
 package org.acme;
 
+import org.acme.Libro;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.ws.rs.*;
 
@@ -8,25 +10,28 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static java.sql.DriverManager.println;
-
 @Path("/biblioteca")
 public class RecursoBiblioteca {
     HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
     PanacheEntity libroBuscado;
+    RepositorioLibro repo = new RepositorioLibro();
+    Libro libro = new Libro();
 
     @POST
     public void pedirLibro(long idLibro) {
-        if (this.libroPrestado(idLibro)) {
-            RepositorioLibro.persist(idLibro);
-        } else {println("Libro no disponible");}
+        libro = repo.findById(idLibro);
+        if (libro != null && this.libroPrestado(idLibro)) {
+            repo.persist(libro);
+        } else {
+            System.out.println("Libro no disponible");
+        }
     }
 
     @GET
-    public long obtenerLibro(long idLibro) {
-        libroBuscado = RepositorioLibro.findById(idLibro);
+    public Libro obtenerLibro(long idLibro) {
+        libroBuscado = repo.findById(idLibro);
         if (libroBuscado == null) {throw new ExcepcionNoEncuentraLibro();}
-        return idLibro;
+        return libro;
     }
 
     @DELETE
@@ -36,7 +41,7 @@ public class RecursoBiblioteca {
         } catch (ExcepcionNoEncuentraLibro e) {
             return false;
         }
-        RepositorioLibro.deleteById(idLibro);
+        repo.deleteById(libro.id);
         return true;
     }
 
