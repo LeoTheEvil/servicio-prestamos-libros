@@ -11,5 +11,5 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface ClienteLibro {
     @GET
     @Path("/ObtenerLibro")
-    boolean libroPrestado(@QueryParam("libro") Libro libro);
+    long obtenerLibro(@QueryParam("libro") long idlibro);
 }

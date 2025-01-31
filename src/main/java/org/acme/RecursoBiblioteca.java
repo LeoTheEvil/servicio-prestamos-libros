@@ -4,44 +4,45 @@ import jakarta.inject.Inject;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
-import java.util.Optional;
 
 @Path("/biblioteca")
-public class RecursoBiblioteca implements ClienteLibro {
+public class RecursoBiblioteca {
 
     @Inject
     @RestClient
     ClienteLibro clienteLibro;
-    RepositorioLibro repo = new RepositorioLibro();
-    Optional<Libro> libro = new Libro();
-    Libro libroBuscado;
+    RepositorioPrestamos repo = new RepositorioPrestamos();
+    Prestamo prestamo = new Prestamo();
+    long idLibroBuscado;
     List<String> listaPrestatarios;
+    int codigo;
 
     @POST
-    public void pedirLibro(long idLibro, String nombrePrestatario) {
-        libro = repo.findById(idLibro);
-        if (libro.isPresent() && this.libroPrestado(clienteLibro.getById(libro))) {
-            repo.persist(libro);
-        } else {
+    public void pedirLibro(Prestamo prestamo) {
+        libroPrestado(prestamo.id);
+        if (codigo == 200) {
+            repo.persist(prestamo);
+        } else if (codigo == 202) {
             System.out.println("Libro no disponible");
-            listaPrestatarios.add(nombrePrestatario);
+            listaPrestatarios.add(prestamo.prestatario);
         }
     }
 
     @DELETE
-    public boolean devolverLibro(long idLibro) {
+    public boolean devolverLibro(long idPrestamo) {
         try {
-            libroBuscado = repo.findById(idLibro);
+            prestamo = repo.findById(prestamo.id);
         } catch (ExcepcionNoEncuentraLibro e) {
             return false;
         }
         if (listaPrestatarios.isEmpty()) {
-            repo.deleteById(libro.id);
+            repo.deleteById(prestamo.id);
         } else {
-            libroBuscado.prestatario = listaPrestatarios.get(0);
+            prestamo.prestatario = listaPrestatarios.get(0);
             listaPrestatarios.remove(0);
         }
         return true;
@@ -49,20 +50,21 @@ public class RecursoBiblioteca implements ClienteLibro {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean libroPrestado(@QueryParam(Libro) Libro libro) {
+    public int libroPrestado(long idlibro) {
         try {
-            libroBuscado = clienteLibro.getById(libro.id);
-            if (libro == null) {
+            idLibroBuscado = clienteLibro.obtenerLibro(idlibro);
+            if (idLibroBuscado == 0) {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
-                return false;
+                codigo=404;
             }
-            if  (libroBuscado.id == libro.id) {
-                System.out.println("Este libro ya esta prestado a " + libro.prestatario);
-                return true;
-            } else {return false;}
+            if  (prestamo.id == idLibroBuscado) {
+                System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
+                codigo=202;
+            } else {codigo=200;}
         } catch (Exception ConnectionError) {
             ConnectionError.getMessage();
-            return false;
+            codigo=500;
         }
+        return codigo;
     }
 }

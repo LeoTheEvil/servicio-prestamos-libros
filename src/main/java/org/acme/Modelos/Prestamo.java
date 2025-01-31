@@ -1,10 +1,10 @@
-package org.acme;
+package org.acme.Modelos;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Libro extends PanacheEntity{
+public class Prestamo extends PanacheEntity{
     public long id;
     public String prestatario;
 }
