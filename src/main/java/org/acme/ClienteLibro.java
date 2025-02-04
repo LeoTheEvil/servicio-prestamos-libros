@@ -3,6 +3,7 @@ package org.acme;
 import jakarta.ws.rs.*;
 
 import jakarta.ws.rs.core.MediaType;
+import org.acme.Modelos.Libro;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @Path("/biblioteca/")
@@ -10,6 +11,10 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @RegisterRestClient(configKey = "servicio-biblioteca")
 public interface ClienteLibro {
     @GET
-    @Path("/ObtenerLibro")
+    @Path("controlador-libro/obtenerLibro")
     long obtenerLibro(@QueryParam("libro") long idlibro);
+
+    @POST
+    @Path("controlador-libro/guardarLibro")
+    Libro guardarLibro(@QueryParam("libro") Libro libro);
 }

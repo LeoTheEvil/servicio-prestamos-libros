@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
+import org.acme.Modelos.Libro;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.util.Optional;
 import jakarta.ws.rs.client.Client;
@@ -22,15 +23,19 @@ public class InjectMockTest {
 
     @InjectMock
     @RestClient
-    @ConfigProperty(name = "http://localhost:8081/api/books")
     ClienteLibro mock;
 
     RepositorioPrestamos repo = new RepositorioPrestamos();
     RecursoBiblioteca biblio = new RecursoBiblioteca();
     Prestamo prestamo = new Prestamo();
+    Libro libro = new Libro();
 
     @Test
     void prestarLibro1aLeo() {
+        libro.setTitle("Don Quijote de la Mancha");
+        libro.setAuthor("Miguel de Cervantes Saavedra");
+        libro.setGenre("Comedia");
+        mock.guardarLibro(libro);
         prestamo.id=1;
         prestamo.prestatario="Leo";
         given().port(port).when().get("/biblioteca"+prestamo.id).then().body("id", equalTo(prestamo.id));
