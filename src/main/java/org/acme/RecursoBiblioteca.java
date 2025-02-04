@@ -19,17 +19,18 @@ public class RecursoBiblioteca {
     Prestamo prestamo = new Prestamo();
     long idLibroBuscado;
     List<String> listaPrestatarios;
-    int codigo;
+
 
     @POST
-    public void pedirLibro(Prestamo prestamo) {
-        libroPrestado(prestamo.id);
+    public Prestamo pedirLibro(Prestamo prestamo) {
+        int codigo = libroPrestado(prestamo.id);
         if (codigo == 200) {
             repo.persist(prestamo);
         } else if (codigo == 202) {
             System.out.println("Libro no disponible");
             listaPrestatarios.add(prestamo.prestatario);
         }
+        return prestamo;
     }
 
     @DELETE
@@ -51,6 +52,7 @@ public class RecursoBiblioteca {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public int libroPrestado(long idlibro) {
+        int codigo;
         try {
             idLibroBuscado = clienteLibro.obtenerLibro(idlibro);
             if (idLibroBuscado == 0) {
