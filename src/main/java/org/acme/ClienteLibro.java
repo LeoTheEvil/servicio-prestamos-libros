@@ -4,6 +4,7 @@ import jakarta.ws.rs.*;
 
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Modelos.Libro;
+import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @Path("/biblioteca/")
@@ -12,7 +13,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface ClienteLibro {
     @GET
     @Path("controlador-libro/obtenerLibro")
-    long obtenerLibro(@QueryParam("libro") long idlibro);
+    Libro obtenerLibro(@QueryParam("libro") long idlibro);
 
     @POST
     @Path("controlador-libro/guardarLibro")

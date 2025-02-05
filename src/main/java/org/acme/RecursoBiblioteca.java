@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.Modelos.Libro;
 import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -17,7 +18,7 @@ public class RecursoBiblioteca {
     ClienteLibro clienteLibro;
     RepositorioPrestamos repo = new RepositorioPrestamos();
     Prestamo prestamo = new Prestamo();
-    long idLibroBuscado;
+    Libro libroBuscado;
     List<String> listaPrestatarios;
 
 
@@ -54,12 +55,12 @@ public class RecursoBiblioteca {
     public int libroPrestado(long idlibro) {
         int codigo;
         try {
-            idLibroBuscado = clienteLibro.obtenerLibro(idlibro);
-            if (idLibroBuscado == 0) {
+            libroBuscado = clienteLibro.obtenerLibro(idlibro);
+            if (libroBuscado.getId() == 0) {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
                 codigo=404;
             }
-            if  (prestamo.id == idLibroBuscado) {
+            if  (prestamo.id == libroBuscado.getId()) {
                 System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
                 codigo=202;
             } else {codigo=200;}

@@ -35,11 +35,10 @@ public class InjectMockTest {
         libro.setTitle("Don Quijote de la Mancha");
         libro.setAuthor("Miguel de Cervantes Saavedra");
         libro.setGenre("Comedia");
-        mock.guardarLibro(libro);
         prestamo.id=1;
         prestamo.prestatario="Leo";
+        when(mock.obtenerLibro(prestamo.id)).thenReturn(libro);
         given().port(port).when().get("/biblioteca"+prestamo.id).then().body("id", equalTo(prestamo.id));
-        when(biblio.pedirLibro(prestamo)).thenReturn(repo.findById(1L));
         Assertions.assertEquals(prestamo, repo.findById(1L));
     }
 }
