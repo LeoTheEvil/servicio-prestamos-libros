@@ -38,7 +38,7 @@ public class InjectMockTest {
         prestamo.id=1;
         prestamo.prestatario="Leo";
         when(mock.obtenerLibro(prestamo.id)).thenReturn(libro);
-        given().port(port).when().get("/biblioteca"+prestamo.id).then().body("id", equalTo(prestamo.id));
+        given().port(port).when().get("/biblioteca").then().body("id", equalTo(prestamo.id));
         Assertions.assertEquals(prestamo, repo.findById(1L));
     }
 }

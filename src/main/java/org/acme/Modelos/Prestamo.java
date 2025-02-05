@@ -7,4 +7,5 @@ import jakarta.persistence.Entity;
 public class Prestamo extends PanacheEntity{
     public long id;
     public String prestatario;
+    public boolean prestado;
 }

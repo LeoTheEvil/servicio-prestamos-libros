@@ -23,13 +23,13 @@ public class RecursoBiblioteca {
 
 
     @POST
-    public Prestamo pedirLibro(Prestamo prestamo) {
-        int codigo = libroPrestado(prestamo.id);
-        if (codigo == 200) {
-            repo.persist(prestamo);
-        } else if (codigo == 202) {
+    public Prestamo pedirLibro() {
+        prestamo = libroPrestado(prestamo.id);
+        if (prestamo.prestado) {
             System.out.println("Libro no disponible");
             listaPrestatarios.add(prestamo.prestatario);
+        } else {
+            repo.persist(prestamo);
         }
         return prestamo;
     }
@@ -52,22 +52,19 @@ public class RecursoBiblioteca {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public int libroPrestado(long idlibro) {
-        int codigo;
+    public Prestamo libroPrestado(long idlibro) {
         try {
             libroBuscado = clienteLibro.obtenerLibro(idlibro);
             if (libroBuscado.getId() == 0) {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
-                codigo=404;
             }
             if  (prestamo.id == libroBuscado.getId()) {
                 System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
-                codigo=202;
-            } else {codigo=200;}
+                prestamo.prestado=true;
+            } else {prestamo.prestado=false;}
         } catch (Exception ConnectionError) {
             ConnectionError.getMessage();
-            codigo=500;
         }
-        return codigo;
+        return prestamo;
     }
 }
