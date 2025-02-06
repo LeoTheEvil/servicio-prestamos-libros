@@ -5,6 +5,10 @@ import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import org.acme.Modelos.Libro;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.util.Optional;
@@ -31,6 +35,9 @@ public class InjectMockTest {
     Libro libro = new Libro();
 
     @Test
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{idLibro}")
     void prestarLibro1aLeo() {
         libro.setTitle("Don Quijote de la Mancha");
         libro.setAuthor("Miguel de Cervantes Saavedra");
@@ -38,7 +45,7 @@ public class InjectMockTest {
         prestamo.id=1;
         prestamo.prestatario="Leo";
         when(mock.obtenerLibro(prestamo.id)).thenReturn(libro);
-        given().port(port).when().get("/biblioteca").then().body("id", equalTo(prestamo.id));
+        given().port(port).when().get("/biblioteca/"+libro.getId()).then().body("id", equalTo(prestamo.id));
         Assertions.assertEquals(prestamo, repo.findById(1L));
     }
 }

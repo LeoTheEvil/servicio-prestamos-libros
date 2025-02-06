@@ -52,6 +52,7 @@ public class RecursoBiblioteca {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{idLibro}")
     public Prestamo libroPrestado(long idlibro) {
         try {
             libroBuscado = clienteLibro.obtenerLibro(idlibro);
