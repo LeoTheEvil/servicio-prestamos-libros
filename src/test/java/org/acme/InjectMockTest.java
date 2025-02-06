@@ -5,17 +5,9 @@ import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Modelos.Libro;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import java.util.Optional;
-import jakarta.ws.rs.client.Client;
-import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,21 +23,18 @@ public class InjectMockTest {
 
     RepositorioPrestamos repo = new RepositorioPrestamos();
     RecursoBiblioteca biblio = new RecursoBiblioteca();
-    Prestamo prestamo = new Prestamo();
     Libro libro = new Libro();
 
     @Test
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{idLibro}")
     void prestarLibro1aLeo() {
+        libro.setId(1L);
         libro.setTitle("Don Quijote de la Mancha");
         libro.setAuthor("Miguel de Cervantes Saavedra");
         libro.setGenre("Comedia");
-        prestamo.id=1;
-        prestamo.prestatario="Leo";
-        when(mock.obtenerLibro(prestamo.id)).thenReturn(libro);
-        given().port(port).when().get("/biblioteca/"+libro.getId()).then().body("id", equalTo(prestamo.id));
-        Assertions.assertEquals(prestamo, repo.findById(1L));
+        long idPrestamo=1;
+        String nombrePrestatario="Leo";
+        when(mock.obtenerLibro(idPrestamo)).thenReturn(libro);
+        given().port(port).contentType(MediaType.APPLICATION_JSON).when().get("/biblioteca/"+libro.getId()).then().statusCode(200).body("id", equalTo(idPrestamo));
+        Assertions.assertEquals(idPrestamo, repo.findById(1L));
     }
 }
