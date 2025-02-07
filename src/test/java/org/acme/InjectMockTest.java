@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Modelos.Libro;
+import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class InjectMockTest {
         libro.setGenre("Comedia");
         long idPrestamo=1;
         String nombrePrestatario="Leo";
-        biblio.pedirLibro(idPrestamo, nombrePrestatario);
+        Prestamo prestamo = biblio.pedirLibro(idPrestamo, nombrePrestatario);
         when(mock.obtenerLibro(idPrestamo)).thenReturn(libro);
         given().port(port).contentType(MediaType.APPLICATION_JSON).when().get("/biblioteca/"+libro.getId()).then().statusCode(200).body("id", equalTo(idPrestamo));
         Assertions.assertEquals(idPrestamo, repo.findById(1L));
