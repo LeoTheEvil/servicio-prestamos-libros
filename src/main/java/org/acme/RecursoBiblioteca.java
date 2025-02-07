@@ -17,18 +17,18 @@ public class RecursoBiblioteca {
     @RestClient
     ClienteLibro clienteLibro;
     RepositorioPrestamos repo = new RepositorioPrestamos();
-    Prestamo prestamo = new Prestamo();
-    Libro libroBuscado;
     List<String> listaPrestatarios;
 
-
     @POST
-    public Prestamo pedirLibro() {
-        prestamo = libroPrestado(prestamo.id);
-        if (prestamo.prestado) {
+    public Prestamo pedirLibro(long idLibro, String nombrePrestatario) {
+        Prestamo prestamo = new Prestamo();
+        int codigo = libroPrestado(idLibro, nombrePrestatario);
+        if (codigo == 202) {
             System.out.println("Libro no disponible");
-            listaPrestatarios.add(prestamo.prestatario);
-        } else {
+            listaPrestatarios.add(nombrePrestatario);
+        } else if (codigo == 200) {
+            prestamo.id=idLibro;
+            prestamo.prestatario=nombrePrestatario;
             repo.persist(prestamo);
         }
         return prestamo;
@@ -36,8 +36,9 @@ public class RecursoBiblioteca {
 
     @DELETE
     public boolean devolverLibro(long idPrestamo) {
+        Prestamo prestamo = new Prestamo();
         try {
-            prestamo = repo.findById(prestamo.id);
+            prestamo = repo.findById(idPrestamo);
         } catch (ExcepcionNoEncuentraLibro e) {
             return false;
         }
@@ -53,19 +54,21 @@ public class RecursoBiblioteca {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{idLibro}")
-    public Prestamo libroPrestado(@PathParam("idLibro") long idlibro) {
+    public int libroPrestado(@PathParam("IdLibro") long idPrestamo, @PathParam("Prestatario") String prestatario) {
+        Libro libroBuscado;
         try {
-            libroBuscado = clienteLibro.obtenerLibro(idlibro);
+            libroBuscado = clienteLibro.obtenerLibro(idPrestamo);
             if (libroBuscado.getId() == 0) {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
+                return 404;
             }
-            if  (prestamo.id == libroBuscado.getId()) {
-                System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
-                prestamo.prestado=true;
-            } else {prestamo.prestado=false;}
+            if  (repo.findById(idPrestamo) != null) {
+                System.out.println("Este libro ya esta prestado a " + prestatario);
+                return 202;
+            } else {return 200;}
         } catch (Exception ConnectionError) {
             ConnectionError.getMessage();
+            return 500;
         }
-        return prestamo;
     }
 }

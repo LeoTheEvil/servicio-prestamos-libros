@@ -33,6 +33,7 @@ public class InjectMockTest {
         libro.setGenre("Comedia");
         long idPrestamo=1;
         String nombrePrestatario="Leo";
+        biblio.pedirLibro(idPrestamo, nombrePrestatario);
         when(mock.obtenerLibro(idPrestamo)).thenReturn(libro);
         given().port(port).contentType(MediaType.APPLICATION_JSON).when().get("/biblioteca/"+libro.getId()).then().statusCode(200).body("id", equalTo(idPrestamo));
         Assertions.assertEquals(idPrestamo, repo.findById(1L));

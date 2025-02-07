@@ -14,7 +14,6 @@ public class Libro {
     private String author;
     @Column(nullable=false)
     private String genre;
-
     public Long getId() {
         return id;
     }
