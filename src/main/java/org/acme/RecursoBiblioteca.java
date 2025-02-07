@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.acme.Modelos.Libro;
 import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -22,11 +23,11 @@ public class RecursoBiblioteca {
     @POST
     public void pedirLibro(long idLibro, String nombrePrestatario) {
         Prestamo prestamo = new Prestamo();
-        int codigo = libroPrestado(idLibro);
-        if (codigo == 202) {
+        Response respuesta = libroPrestado(idLibro);
+        if (respuesta.getStatus() == 202) {
             System.out.println("Libro no disponible");
             listaPrestatarios.add(nombrePrestatario);
-        } else if (codigo == 200) {
+        } else if (respuesta.getStatus() == 200) {
             prestamo.id=idLibro;
             prestamo.prestatario=nombrePrestatario;
             repo.persist(prestamo);
@@ -50,25 +51,26 @@ public class RecursoBiblioteca {
         return true;
     }
 
-    @GET
+
     @Produces(MediaType.APPLICATION_JSON)
+    @GET
     @Path("/{idLibro}")
-    public int libroPrestado(@PathParam("IdLibro") long idPrestamo) {
+    public Response libroPrestado(@PathParam("idPrestamo") long idPrestamo) {
         Libro libroBuscado;
         try {
             libroBuscado = clienteLibro.obtenerLibro(idPrestamo);
             if (libroBuscado.getId() == 0) {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
-                return 404;
+                return Response.noContent().build();
             }
             Prestamo prestamo = repo.findById(idPrestamo);
             if  (prestamo != null) {
                 System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
-                return 202;
-            } else {return 200;}
+                return Response.accepted().build();
+            } else {return Response.ok().build();}
         } catch (Exception ConnectionError) {
             ConnectionError.getMessage();
-            return 500;
+            return Response.serverError().build();
         }
     }
 }
