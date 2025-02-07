@@ -20,9 +20,9 @@ public class RecursoBiblioteca {
     List<String> listaPrestatarios;
 
     @POST
-    public Prestamo pedirLibro(long idLibro, String nombrePrestatario) {
+    public void pedirLibro(long idLibro, String nombrePrestatario) {
         Prestamo prestamo = new Prestamo();
-        int codigo = libroPrestado(idLibro, nombrePrestatario);
+        int codigo = libroPrestado(idLibro);
         if (codigo == 202) {
             System.out.println("Libro no disponible");
             listaPrestatarios.add(nombrePrestatario);
@@ -31,7 +31,6 @@ public class RecursoBiblioteca {
             prestamo.prestatario=nombrePrestatario;
             repo.persist(prestamo);
         }
-        return prestamo;
     }
 
     @DELETE
@@ -54,7 +53,7 @@ public class RecursoBiblioteca {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{idLibro}")
-    public int libroPrestado(@PathParam("IdLibro") long idPrestamo, @PathParam("Prestatario") String prestatario) {
+    public int libroPrestado(@PathParam("IdLibro") long idPrestamo) {
         Libro libroBuscado;
         try {
             libroBuscado = clienteLibro.obtenerLibro(idPrestamo);
@@ -62,8 +61,9 @@ public class RecursoBiblioteca {
                 System.out.println("El libro solicitado no esta en esta biblioteca.");
                 return 404;
             }
-            if  (repo.findById(idPrestamo) != null) {
-                System.out.println("Este libro ya esta prestado a " + prestatario);
+            Prestamo prestamo = repo.findById(idPrestamo);
+            if  (prestamo != null) {
+                System.out.println("Este libro ya esta prestado a " + prestamo.prestatario);
                 return 202;
             } else {return 200;}
         } catch (Exception ConnectionError) {
