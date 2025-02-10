@@ -21,40 +21,36 @@ public class RecursoBiblioteca {
     List<String> listaPrestatarios;
 
     @POST
-    public void pedirLibro(long idLibro, String nombrePrestatario) {
-        Prestamo prestamo = new Prestamo();
-        Response respuesta = libroPrestado(idLibro);
+    public Prestamo pedirLibro(Prestamo prestamo) {
+        Response respuesta = libroPrestado(prestamo.idLibro);
         if (respuesta.getStatus() == 202) {
             System.out.println("Libro no disponible");
-            listaPrestatarios.add(nombrePrestatario);
+            listaPrestatarios.add(prestamo.prestatario);
         } else if (respuesta.getStatus() == 200) {
-            prestamo.id=idLibro;
-            prestamo.prestatario=nombrePrestatario;
             repo.persist(prestamo);
         }
+        return prestamo;
     }
 
     @DELETE
     public boolean devolverLibro(long idPrestamo) {
-        Prestamo prestamo = new Prestamo();
         try {
-            prestamo = repo.findById(idPrestamo);
+            Prestamo prestamo = repo.findById(idPrestamo);
+            if (listaPrestatarios.isEmpty()) {
+                repo.deleteById(prestamo.id);
+            } else {
+                prestamo.prestatario = listaPrestatarios.get(0);
+                listaPrestatarios.remove(0);
+            }
+            return true;
         } catch (ExcepcionNoEncuentraLibro e) {
             return false;
         }
-        if (listaPrestatarios.isEmpty()) {
-            repo.deleteById(prestamo.id);
-        } else {
-            prestamo.prestatario = listaPrestatarios.get(0);
-            listaPrestatarios.remove(0);
-        }
-        return true;
     }
-
 
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    @Path("/{idLibro}")
+    @Path("/{idPrestamo}")
     public Response libroPrestado(@PathParam("idPrestamo") long idPrestamo) {
         Libro libroBuscado;
         try {
