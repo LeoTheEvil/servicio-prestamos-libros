@@ -9,6 +9,7 @@ import org.acme.Modelos.Libro;
 import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/biblioteca")
@@ -18,7 +19,7 @@ public class RecursoBiblioteca {
     @RestClient
     ClienteLibro clienteLibro;
     RepositorioPrestamos repo = new RepositorioPrestamos();
-    List<String> listaPrestatarios;
+    List<String> listaPrestatarios = new ArrayList<>();
 
     @POST
     public Prestamo pedirLibro(Prestamo prestamo) {
