@@ -22,6 +22,7 @@ public class RecursoBiblioteca {
     List<String> listaPrestatarios = new ArrayList<>();
 
     @POST
+    @Path("/{idPrestamo}")
     public Prestamo pedirLibro(Prestamo prestamo) {
         Response respuesta = libroPrestado(prestamo.idLibro);
         if (respuesta.getStatus() == 202) {

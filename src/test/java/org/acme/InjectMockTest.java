@@ -88,7 +88,6 @@ public class InjectMockTest {
         libro.setGenre("Comedia");
         prestamo.idLibro=1;
         prestamo.prestatario="Leo";
-        repo.persist(prestamo);
         int id = given().port(port).body(prestamo).contentType(MediaType.APPLICATION_JSON.toString())
                 .accept(MediaType.APPLICATION_JSON.toString()).when().post("/biblioteca/"+prestamo.idLibro).then().statusCode(200)
                 .extract().jsonPath().getObject("idLibro",Integer.class);
