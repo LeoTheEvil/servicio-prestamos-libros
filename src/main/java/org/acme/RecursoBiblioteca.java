@@ -34,7 +34,8 @@ public class RecursoBiblioteca {
     }
 
     @DELETE
-    public boolean devolverLibro(long idPrestamo) {
+    @Path("/{idPrestamo}")
+    public boolean devolverLibro(@PathParam("idPrestamo") long idPrestamo) {
         try {
             Prestamo prestamo = repo.findById(idPrestamo);
             if (listaPrestatarios.isEmpty()) {
