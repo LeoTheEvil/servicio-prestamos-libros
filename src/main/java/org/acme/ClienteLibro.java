@@ -1,15 +1,16 @@
 package org.acme;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Modelos.Libro;
-import org.acme.Modelos.Prestamo;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@Path("/biblioteca/")
+@Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
 @RegisterRestClient(configKey = "servicio-biblioteca")
+@ApplicationScoped
 public interface ClienteLibro {
     @GET
     @Path("controlador-libro/obtenerLibro")

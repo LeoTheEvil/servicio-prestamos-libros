@@ -12,7 +12,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("/biblioteca")
+@Path("/api/books")
 public class RecursoBiblioteca {
 
     @Inject
